@@ -1,0 +1,456 @@
+Copyright (c) 2026, GrandBIRDLizard.
+BSD 3-.Clause, All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of GrandBIRDLizard, Pythonic-Palette-Gen nor the names of its contributors may be used
+   to endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Pythonic Palette Generator 0.x Quickstart
+===================================
+
+Purpose
+-------
+Two small Python tools:
+
+1) palette_gen.py
+   - Extracts a wallpaper-driven palette
+   - Normalizes it into Base16-style semantic slots
+   - Can emit:
+     - color.ini (Base16-style)
+     - GTK3 00-palette.css
+     - GTK2 colors.rc
+
+2) theme_build.py
+   - Imports palette_gen.py directly (same Python process, no subprocess)
+   - Creates / updates the Dorakura-Kyoto theme tree
+   - Generates palette files into the theme
+   - Writes minimal GTK2 / GTK3 consumer files
+   - Creates widget stub files if missing
+
+------------------------------------------------------------
+BASIC CONCEPT
+------------------------------------------------------------
+
+palette_gen.py = palette engine
+theme_build.py = theme scaffold / assembler
+
+Use palette_gen.py when:
+- you want to inspect palette output
+- you want to test extraction logic
+- you want raw generated files only
+
+Use theme_build.py when:
+- you want the actual theme tree built / updated
+- you want a working theme skeleton
+- you want the “real” command for your personal system
+
+------------------------------------------------------------
+REQUIRED
+------------------------------------------------------------
+
+Python 3.12+
+Pillow installed in your venv
+
+Example:
+    source .venv/bin/activate
+
+------------------------------------------------------------
+NORMAL PROJECT LAYOUT
+------------------------------------------------------------
+
+Recommended working dir:
+
+    python-lab/
+    ├── palette_gen.py
+    └── theme_build.py
+
+Recommended theme target:
+
+    ~/.local/share/themes/generated-palette/
+
+------------------------------------------------------------
+PALETTE_GEN.PY QUICK USE
+------------------------------------------------------------
+
+1) Print normal Base16-style palette to stdout
+----------------------------------------------
+
+    python3 palette_gen.py /path/to/wallpaper.png
+
+2) Print with debug info (luminance / saturation / hue)
+-------------------------------------------------------
+
+    python3 palette_gen.py /path/to/wallpaper.png --debug
+
+3) Use the sane default surface policy
+--------------------------------------
+
+    python3 palette_gen.py /path/to/wallpaper.png --surface-style neutral --debug
+
+4) Use stylized tinted surfaces
+-------------------------------
+
+    python3 palette_gen.py /path/to/wallpaper.png --surface-style tinted --debug
+
+5) Write GTK3 palette file only
+-------------------------------
+
+    python3 palette_gen.py /path/to/wallpaper.png \
+      --format css \
+      --output ~/.local/share/themes/Dorakura-Kyoto/gtk-3.0/widgets/00-palette.css
+
+6) Write GTK2 palette file only
+-------------------------------
+
+    python3 palette_gen.py /path/to/wallpaper.png \
+      --format gtk2 \
+      --output ~/.local/share/themes/Dorakura-Kyoto/gtk-2.0/colors.rc
+
+7) Write all palette artifacts at once (recommended direct generator test)
+-------------------------------------------------------------------------
+
+    python3 palette_gen.py /path/to/wallpaper.png \
+      --surface-style neutral \
+      --format all \
+      --base16-output ~/.local/share/themes/Dorakura-Kyoto/color.ini \
+      --css-output ~/.local/share/themes/Dorakura-Kyoto/gtk-3.0/widgets/00-palette.css \
+      --gtk2-output ~/.local/share/themes/Dorakura-Kyoto/gtk-2.0/colors.rc
+
+------------------------------------------------------------
+PALETTE_GEN.PY IMPORTANT FLAGS
+------------------------------------------------------------
+
+--surface-style neutral
+    Default / recommended
+    Better structural UI surfaces
+    Safer for GTK
+
+--surface-style tinted
+    More stylized / colorful dark surfaces
+    Good for “art mode” or mood builds
+    Not the default for sane general theming
+
+--format base16
+    Print Base16-style INI output
+
+--format css
+    Print GTK3 palette CSS (00-palette.css content)
+
+--format gtk2
+    Print GTK2 colors.rc content
+
+--format all
+    Emit all formats
+    Best when paired with:
+        --base16-output
+        --css-output
+        --gtk2-output
+
+--debug
+    Prints per-slot:
+    - hex
+    - luminance
+    - saturation
+    - hue
+
+------------------------------------------------------------
+THEME_BUILD.PY QUICK USE
+------------------------------------------------------------
+
+1) First real build (recommended)
+---------------------------------
+
+    python3 theme_build.py /path/to/wallpaper.png
+
+This:
+- creates the Dorakura-Kyoto tree if missing
+- generates:
+  - color.ini
+  - gtk-2.0/colors.rc
+  - gtk-3.0/widgets/00-palette.css
+- writes:
+  - index.theme
+  - gtk-2.0/gtkrc
+  - gtk-3.0/gtk.css
+  - gtk-3.0/gtk-dark.css
+- creates widget stub files only if missing
+
+2) Use the sane default explicitly
+----------------------------------
+
+    python3 theme_build.py /path/to/wallpaper.png \
+      --surface-style neutral
+
+3) Use tinted surfaces
+----------------------
+
+    python3 theme_build.py /path/to/wallpaper.png \
+      --surface-style tinted
+
+4) Use your current test image
+------------------------------
+
+    python3 theme_build.py path_to/picture_style.png
+
+5) Overwrite consumer entry files only
+--------------------------------------
+
+    python3 theme_build.py /path/to/wallpaper.png \
+      --surface-style neutral \
+      --force-consumers
+
+This overwrites:
+- index.theme
+- gtk-2.0/gtkrc
+- gtk-3.0/gtk.css
+- gtk-3.0/gtk-dark.css
+
+6) Overwrite widget stubs too (dangerous)
+-----------------------------------------
+
+    python3 theme_build.py /path/to/wallpaper.png \
+      --surface-style neutral \
+      --force-consumers \
+      --force-widgets
+
+WARNING:
+This can overwrite your widget CSS module work.
+
+------------------------------------------------------------
+THEME_BUILD.PY IMPORTANT FLAGS
+------------------------------------------------------------
+
+--theme-root PATH
+    Change the target theme directory
+
+Default:
+    ~/.local/share/themes/Dorakura-Kyoto
+
+Example:
+    python3 theme_build.py wallpaper.png \
+      --theme-root ~/.local/share/themes/Dorakura-Kyoto
+
+--theme-name
+    Theme display name written into index.theme
+
+Default:
+    Dorakura-Kyoto
+
+--scheme-name
+    Name written into color.ini output
+
+Default:
+    Dorakura-Auto
+
+--author
+    Author string for generated palette outputs
+
+Default:
+    theme_build.py
+
+--surface-style neutral|tinted
+    Passed through to palette_gen.py logic
+
+--force-consumers
+    Overwrite consumer files
+
+--force-widgets
+    Overwrite widget stub files
+    Use only if you intentionally want to regenerate them
+
+------------------------------------------------------------
+EXPECTED THEME TREE
+------------------------------------------------------------
+
+After running theme_build.py, you should have:
+
+    ~/.local/share/themes/Dorakura-Kyoto/
+    ├── index.theme
+    ├── color.ini
+    ├── gtk-2.0/
+    │   ├── gtkrc
+    │   └── colors.rc
+    └── gtk-3.0/
+        ├── assets/
+        ├── gtk.css
+        ├── gtk-dark.css
+        └── widgets/
+            ├── 00-palette.css
+            ├── 20-buttons.css
+            ├── 30-entries.css
+            ├── 40-headerbar.css
+            ├── 50-menus.css
+            ├── 60-notebook.css
+            ├── 70-controls.css
+            ├── 80-lists-sidebar.css
+            ├── 90-app-nemo.css
+            └── 99-dorakura-overrides.css
+
+------------------------------------------------------------
+RECOMMENDED REAL-WORLD WORKFLOW
+------------------------------------------------------------
+
+Step 1: test raw palette first
+------------------------------
+
+    python3 palette_gen.py /path/to/wallpaper.png --surface-style neutral --debug
+
+If palette looks sane:
+- dark ramp is stable
+- accent is usable
+- text ramp is readable
+
+Step 2: build / refresh the theme
+---------------------------------
+
+    python3 theme_build.py /path/to/wallpaper.png --surface-style neutral
+
+Step 3: inspect generated files
+-------------------------------
+
+    sed -n '1,40p' ~/.local/share/themes/Dorakura-Kyoto/color.ini
+    sed -n '1,80p' ~/.local/share/themes/Dorakura-Kyoto/gtk-2.0/colors.rc
+    sed -n '1,120p' ~/.local/share/themes/Dorakura-Kyoto/gtk-3.0/widgets/00-palette.css
+
+Step 4: manually tune widget modules
+------------------------------------
+
+Priority files:
+- 20-buttons.css
+- 30-entries.css
+- 70-controls.css
+- 90-app-nemo.css
+
+These will give the biggest visible improvement first.
+
+------------------------------------------------------------
+IMPORTANT ARCHITECTURE NOTE
+------------------------------------------------------------
+
+theme_build.py imports palette_gen.py directly.
+
+This means:
+- same interpreter
+- same process
+- no subprocess
+- no extra Python instance
+- direct function calls
+- direct dict/string returns
+
+This is the correct design.
+
+Bad approach:
+    subprocess.run(["python3", "palette_gen.py", ...])
+
+Good approach:
+    from palette_gen import generate_base16_palette
+
+------------------------------------------------------------
+SAFE DEFAULTS
+------------------------------------------------------------
+
+Recommended default for almost everything:
+
+    --surface-style neutral
+
+Why:
+- better dark surface discipline
+- safer GTK defaults
+- less over-colored UI
+- still preserves good accent extraction
+
+Use tinted only when you explicitly want:
+- stronger mood
+- more stylized panels
+- wallpaper-reactive drama
+
+------------------------------------------------------------
+QUICK COPY/PASTE COMMANDS
+------------------------------------------------------------
+
+1) Best palette test command
+----------------------------
+
+    python3 palette_gen.py /path/to/wallpaper.png \
+      --surface-style neutral \
+      --debug
+
+2) Best direct palette file generation command
+-----------------------
+
+
+    python3 palette_gen.py /path/to/wallpaper.png \
+      --surface-style neutral \
+      --format all \
+      --base16-output ~/.local/share/themes/Dorakura-Kyoto/color.ini \
+      --css-output ~/.local/share/themes/Dorakura-Kyoto/gtk-3.0/widgets/00-palette.css \
+      --gtk2-output ~/.local/share/themes/Dorakura-Kyoto/gtk-2.0/colors.rc
+
+3) Best real theme build command
+--------------------------------
+
+    python3 theme_build.py /path/to/wallpaper.png \
+      --surface-style neutral
+
+4) Rebuild entry files only
+---------------------------
+
+    python3 theme_build.py /path/to/wallpaper.png \
+      --surface-style neutral \
+      --force-consumers
+
+5) Full hard regen (careful)
+----------------------------
+
+    python3 theme_build.py /path/to/wallpaper.png \
+      --surface-style neutral \
+      --force-consumers \
+      --force-widgets
+
+------------------------------------------------------------
+CURRENT 0.x MENTAL MODEL
+------------------------------------------------------------
+
+palette_gen.py
+    wallpaper -> palette -> serialized outputs
+
+theme_build.py
+    wallpaper -> palette_gen import -> theme files + palette files
+
+This is the correct 0.x split.
+
+------------------------------------------------------------
+NEXT REAL MILESTONE
+------------------------------------------------------------
+
+Once both scripts are working:
+
+Focus on GTK3 module tuning:
+- 20-buttons.css
+- 30-entries.css
+- 70-controls.css
+- 90-app-nemo.css
+
+That is where the visible “real theme” starts.
+
