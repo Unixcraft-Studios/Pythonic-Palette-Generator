@@ -1,4 +1,4 @@
-=# Pythonic Palette Generator
+# Pythonic Palette Generator
 Copyright (c) 2026, GrandBIRDLizard.
 BSD 3-Clause, All rights reserved.
 
@@ -110,7 +110,7 @@ python3 theme_build.py /path/to/wallpaper.png \
 ```
 
 Creates:
-
+```
 ~/.local/share/themes/Dorakura-Kyoto/
 ├── index.theme                          # Metadata
 ├── color.ini                            # Base16 snapshot
@@ -125,7 +125,7 @@ Creates:
         ├── 20-buttons.css              # Widget stubs (not overwritten)
         ├── 30-entries.css
         └── [... 6 more widget modules ...]
-
+```
 ---
 
 Widget stubs are created only if missing—your edits are safe.i
@@ -177,8 +177,8 @@ with open("theme.css", "w") as f:
 
 **palette_gen.py**
 
-Usage: palette_gen.py IMAGE [OPTIONS]
-
+### Usage: palette_gen.py IMAGE [OPTIONS]
+```
 Options:
   -n, --name TEXT              Scheme name (default: Auto)
   -a, --author TEXT            Author string (default: palette_gen.py)
@@ -192,11 +192,12 @@ Options:
   --css-output PATH            Path for GTK3 CSS output
   --gtk2-output PATH           Path for GTK2 RC output
   --debug                      Print luminance/saturation/hue debug table
+```
 
 **theme_build.py**
 
-Usage: theme_build.py IMAGE [OPTIONS]
-
+### Usage: theme_build.py IMAGE [OPTIONS]
+```
 Options:
   --theme-root PATH             Target theme directory (default: ~/.local/share/themes/Dorakura-Kyoto)
   --theme-name TEXT             Display name for index.theme (default: Theme-Auto)
@@ -208,6 +209,7 @@ Options:
   --surface-style {neutral,tinted}  Dark surface policy (default: neutral)
   --force-consumers             Overwrite index.theme / gtkrc / gtk.css / gtk-dark.css
   --force-widgets               Overwrite widget stubs (dangerous; use only if you know what you're doing)
+```
 
 ---
 
@@ -278,7 +280,7 @@ Adapt the palette engine to KDE, GNOME Shell, icon themes, or custom UIs. The co
 ## Development & Contributintg
 
 **Project Structure**
-
+```
 Pythonic-Palette-Generator/
 ├── palette_gen.py          # Core palette engine (~720 LOC)
 ├── theme_build.py          # Theme assembler (~550 LOC)
@@ -286,7 +288,7 @@ Pythonic-Palette-Generator/
 ├── README-quickstart.txt   # Detailed CLI guide
 ├── LICENCE                 # BSD 3-Clause
 └── Docs/                   # Future documentation
-
+```
 
 
 **Code Style:**
@@ -322,14 +324,14 @@ You may use, modify, and redistribute this software freely, provided you retain 
 
 
 **Output:**
-
-
+```
 base00  #1a0a2e  lum=0.015  sat=0.820  hue=0.805
 base01  #2d1b4e  lum=0.035  sat=0.750  hue=0.805
 base02  #4a2f7a  lum=0.065  sat=0.680  hue=0.800
 base03  #6b4fa0  lum=0.100  sat=0.650  hue=0.800
 ...
 base0E  #d85aff  lum=0.450  sat=0.850  hue=0.815  <- Primary accent (vibrant purple)
+```
 
 ---
 
@@ -372,7 +374,7 @@ print(json.dumps(palette_json, indent=2))
   "base0E": "b8b8ff",
   ...
 }
-
+```
 
 ---
 
