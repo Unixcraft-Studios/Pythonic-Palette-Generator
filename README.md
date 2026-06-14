@@ -2,7 +2,7 @@
 Copyright (c) 2026, GrandBIRDLizard.
 BSD 3-Clause, All rights reserved.
 
-A minimal, modular Python toolkit for generating cohesive GTK theme palettes from wallpaper images. Extract dominant colors, synthesize semantic slots, and emit theme artifacts—all in pure Python, suitable for integration into larger workflows.
+A minimal, modular Python toolkit for generating cohesive GTK theme palettes from wallpaper images. Extract dominant colors, synthesize semantic slots, and emit theme artifacts, all in pure Python. Suitable for integration into larger workflows.
 
 **Licensed under BSD 3-Clause.** See [LICENCE](./LICENCE) for details.
 
@@ -25,6 +25,7 @@ python3 palette_gen.py /path/to/wallpaper.png --debug
 
 # Build a complete GTK theme
 python3 theme_build.py /path/to/wallpaper.png
+```
 
 ---
 
@@ -32,11 +33,11 @@ Core Philosophy: Simplicity Enables Integration
 
 This project is intentionally small and dependency-minimal because:
 
-    No Subprocesses: theme_build.py imports palette_gen.py directly—same Python interpreter, same process. Functions return dicts and strings, not subprocess output to parse.
+    No Subprocesses: theme_build.py imports palette_gen.py using the same Python interpreter, same process. Functions return dicts and strings, not subprocess output to parse.
 
     Pure Color Math: All palette generation uses standard library (colorsys, math) plus Pillow for image processing. No exotic color science libraries.
 
-    Modular Functions: Every palette operation—extraction, deduplication, accent selection, ramp synthesis—is a standalone, testable function with clear inputs and outputs.
+    Modular Functions: Every palette operation—extraction, deduplication, accent selection, ramp synthesis, are standalone, testable function with clear inputs and outputs.
 
     Multiple Output Formats: The same palette engine emits Base16 INI, GTK3 CSS, and GTK2 RC files. Swap serializers without regenerating.
 
@@ -88,16 +89,20 @@ All formats from one palette:
 
 ---
 
+## Usage Patterns
 
-### Usage Patterns
+### Pattern 1: Direct Palette Testing
 
-Pattern 1: Direct Palette Testing
+>
+Use this first a couple times so you get used to the output and behavior of the extraction and output process.
+>
 
 ```python
 python3 palette_gen.py /path/to/wallpaper.png \
   --surface-style neutral \
   --debug
 ```
+
 >
 Output: Base16 palette with debug table (luminance, saturation, hue per slot).
 >
@@ -110,6 +115,7 @@ python3 theme_build.py /path/to/wallpaper.png \
 ```
 
 Creates:
+
 ```
 ~/.local/share/themes/Dorakura-Kyoto/
 ├── index.theme                          # Metadata
@@ -128,7 +134,7 @@ Creates:
 ```
 ---
 
-Widget stubs are created only if missing—your edits are safe.i
+**Widget stubs are created only if not present .your edits are safe.**
 
 ### Pattern 3: Refresh Palette Only
 
@@ -216,37 +222,37 @@ Options:
 ## Why I believe this is maintainable.
 
 
-No Hidden Dependencies
+No Hidden Dependencies:
 
     Only pillow for image I/O
     Core math uses Python stdlib (colorsys, math)
     Color helpers are transparent, not black-box formulas
 
-✅ Pure Functions
+Pure Functions:
 
     palette_gen.py has no global state
     Input → output; no side effects except for I/O helpers
     Easy to test, mock, and reason about
 
-✅ Single Responsibility
+Single Responsibility:
 
     palette_gen.py: Extract + synthesize palettes
     theme_build.py: Orchestrate theme tree + call palette_gen
     Each module does one thing well
 
-✅ Direct Integration
+Direct Integration:
 
     Import functions, not binaries
     Dict/string outputs, not subprocess calls
     No version-lock on CLI output formats
 
-✅ Explicit Fallbacks
+Explicit Fallbacks:
 
     Missing image colors? Use sensible defaults
     Too few extracted colors? Fallback ramp synthesis
     Clear, documented fallback paths
 
-✅ Minimal I/O Assumptions
+Minimal I/O Assumptions:
 
     Doesn't assume theme location
     Doesn't require system packages (beyond Python + Pillow)
@@ -263,8 +269,7 @@ Generate wallpaper-synchronized GTK themes with one command. Refresh instantly w
 
 **For System Tools:**
 
-Embed palette generation into desktop environment installers, customization GUIs, or config managers. Import palette_gen directly—no CLI overhead.
-
+Embed palette generation into desktop environment installers, customization GUIs, or config managers. Import palette_gen directly. **No CLI overhead.**
 
 **For Color Research:**
 
@@ -387,7 +392,7 @@ Q: What if my wallpaper is mostly one color?
 A: Fallback ramp synthesis creates usable dark/light gradients from that dominant color.
 
 Q: Does this require system theme installation?
-A: No. Generated files go to ~/.local/share/themes/ by default—no sudo needed.
+A: No. Generated files go to `~/.local/share/themes/` by default. No sudo needed.
 
 Q: Can I modify generated widget CSS?
 A: Yes. Widget stubs (buttons, entries, etc.) are created only if missing. Your edits are safe on re-run.
