@@ -23,8 +23,12 @@ pip install pillow
 # Test palette extraction (prints to stdout)
 python3 palette_gen.py /path/to/wallpaper.png --debug
 
+# Generate view of palette  
+./palette_gen.py | ./palette_view.py -o dynamic_palette.png
+
 # Build a complete GTK theme
 python3 theme_build.py /path/to/wallpaper.png
+
 ```
 
 ---
