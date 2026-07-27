@@ -1,11 +1,6 @@
-=# Pythonic Palette Generator
-Copyright (c) 2026, GrandBIRDLizard.
-BSD 3-Clause, All rights reserved.
+# Pythonic Palette Generator
 
 A minimal, modular Python toolkit for generating cohesive GTK theme palettes from wallpaper images. Extract dominant colors, synthesize semantic slots, and emit theme artifacts—all in pure Python, suitable for integration into larger workflows.
-
-**Licensed under BSD 3-Clause.** See [LICENCE](./LICENCE) for details.
-
 
 ![Logo](/static/PPGv1.png)
 
@@ -15,7 +10,7 @@ A minimal, modular Python toolkit for generating cohesive GTK theme palettes fro
 
 ### Install Dependencies
 
-```bash
+```
 python3 -m venv .venv
 source .venv/bin/activate
 pip install pillow
@@ -93,8 +88,8 @@ All formats from one palette:
 
 Pattern 1: Direct Palette Testing
 
-```python
-python3 palette_gen.py /path/to/wallpaper.png \
+```python3
+  palette_gen.py /path/to/wallpaper.png \
   --surface-style neutral \
   --debug
 ```
@@ -104,13 +99,14 @@ Output: Base16 palette with debug table (luminance, saturation, hue per slot).
 
 ### Pattern 2: Build a Complete Theme
 
-```python
-python3 theme_build.py /path/to/wallpaper.png \
+```
+  theme_build.py /path/to/wallpaper.png \
   --surface-style neutral
 ```
 
 Creates:
 
+```
 ~/.local/share/themes/Dorakura-Kyoto/
 ├── index.theme                          # Metadata
 ├── color.ini                            # Base16 snapshot
@@ -125,6 +121,7 @@ Creates:
         ├── 20-buttons.css              # Widget stubs (not overwritten)
         ├── 30-entries.css
         └── [... 6 more widget modules ...]
+```
 
 ---
 
@@ -132,9 +129,8 @@ Widget stubs are created only if missing—your edits are safe.i
 
 ### Pattern 3: Refresh Palette Only
 
-
-```python
-python3 theme_build.py /path/to/new-wallpaper.png \
+```
+  theme_build.py /path/to/new-wallpaper.png \
   --theme-root ~/.local/share/themes/Dorakura-Kyoto \
   --surface-style neutral
 ```
@@ -149,14 +145,16 @@ Regenerates color.ini, gtk-2.0/colors.rc, and gtk-3.0/widgets/00-palette.css wit
 
 ### Pattern 4: Library integration
 
-```python
+``` 
 from palette_gen import (
     extract_quantized_colors,
     collapse_similar_colors,
     generate_base16_palette,
     css_palette_text,
 )
+```
 
+```
 # Your tool
 palette = generate_base16_palette(
     img_path="wallpaper.png",
@@ -165,7 +163,9 @@ palette = generate_base16_palette(
     dedupe_distance=24.0,
     surface_style="neutral",
 )
+```
 
+```
 # Emit CSS
 css = css_palette_text(palette)
 with open("theme.css", "w") as f:
@@ -177,6 +177,7 @@ with open("theme.css", "w") as f:
 
 **palette_gen.py**
 
+```
 Usage: palette_gen.py IMAGE [OPTIONS]
 
 Options:
@@ -192,9 +193,11 @@ Options:
   --css-output PATH            Path for GTK3 CSS output
   --gtk2-output PATH           Path for GTK2 RC output
   --debug                      Print luminance/saturation/hue debug table
+```
 
 **theme_build.py**
 
+```
 Usage: theme_build.py IMAGE [OPTIONS]
 
 Options:
@@ -207,44 +210,46 @@ Options:
   --dedupe-distance FLOAT       Min RGB distance (default: 24.0)
   --surface-style {neutral,tinted}  Dark surface policy (default: neutral)
   --force-consumers             Overwrite index.theme / gtkrc / gtk.css / gtk-dark.css
-  --force-widgets               Overwrite widget stubs (dangerous; use only if you know what you're doing)
+  --force-widgets               Overwrite widget stubs (dangerous; use only if you know what
+you're doing)
+```
 
 ---
 
 ## Why I believe this is maintainable.
 
 
-No Hidden Dependencies
+> No Hidden Dependencies
 
     Only pillow for image I/O
     Core math uses Python stdlib (colorsys, math)
     Color helpers are transparent, not black-box formulas
 
-✅ Pure Functions
+> Pure Functions
 
     palette_gen.py has no global state
     Input → output; no side effects except for I/O helpers
     Easy to test, mock, and reason about
 
-✅ Single Responsibility
+> Single Responsibility
 
     palette_gen.py: Extract + synthesize palettes
     theme_build.py: Orchestrate theme tree + call palette_gen
     Each module does one thing well
 
-✅ Direct Integration
+> Direct Integration
 
     Import functions, not binaries
     Dict/string outputs, not subprocess calls
     No version-lock on CLI output formats
 
-✅ Explicit Fallbacks
+> Explicit Fallbacks
 
     Missing image colors? Use sensible defaults
     Too few extracted colors? Fallback ramp synthesis
     Clear, documented fallback paths
 
-✅ Minimal I/O Assumptions
+> Minimal I/O Assumptions
 
     Doesn't assume theme location
     Doesn't require system packages (beyond Python + Pillow)
@@ -275,10 +280,11 @@ Adapt the palette engine to KDE, GNOME Shell, icon themes, or custom UIs. The co
 
 ---
 
-## Development & Contributintg
+## Development & Contributing
 
 **Project Structure**
 
+```
 Pythonic-Palette-Generator/
 ├── palette_gen.py          # Core palette engine (~720 LOC)
 ├── theme_build.py          # Theme assembler (~550 LOC)
@@ -286,7 +292,7 @@ Pythonic-Palette-Generator/
 ├── README-quickstart.txt   # Detailed CLI guide
 ├── LICENCE                 # BSD 3-Clause
 └── Docs/                   # Future documentation
-
+```
 
 
 **Code Style:**
@@ -305,9 +311,9 @@ Pythonic-Palette-Generator/
 
 ---
 
-## Licencse
+## License
 
-### BSD 3clause. (see LICENCE)
+### BSD 3clause. (see LICENSE)
 
 You may use, modify, and redistribute this software freely, provided you retain the copyright notice and license terms.
 
@@ -323,20 +329,21 @@ You may use, modify, and redistribute this software freely, provided you retain 
 
 **Output:**
 
-
+```
 base00  #1a0a2e  lum=0.015  sat=0.820  hue=0.805
 base01  #2d1b4e  lum=0.035  sat=0.750  hue=0.805
 base02  #4a2f7a  lum=0.065  sat=0.680  hue=0.800
 base03  #6b4fa0  lum=0.100  sat=0.650  hue=0.800
 ...
 base0E  #d85aff  lum=0.450  sat=0.850  hue=0.815  <- Primary accent (vibrant purple)
+```
 
 ---
 
 **Example 2: Custom Theme Location:**
 
 
-```pyton
+```
 python3 theme_build.py landscape.png \
   --theme-root ~/.themes/MyTheme \
   --theme-name "My Custom Theme" \
@@ -347,7 +354,7 @@ python3 theme_build.py landscape.png \
 
 **Example 3: Library Use in Another Project:**
 
-```python
+```
 from pathlib import Path
 import json
 from palette_gen import generate_base16_palette, rgb_to_hex
