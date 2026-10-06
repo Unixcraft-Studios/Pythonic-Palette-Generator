@@ -10,16 +10,17 @@ A minimal, modular Python toolkit for generating cohesive GTK theme palettes fro
 
 ### Install Dependencies
 
-```
+```python
 python3 -m venv .venv
 source .venv/bin/activate
 pip install pillow
+```
 
 # Test palette extraction (prints to stdout)
-python3 palette_gen.py /path/to/wallpaper.png --debug
+`python3 palette_gen.py /path/to/wallpaper.png --debug`
 
 # Build a complete GTK theme
-python3 theme_build.py /path/to/wallpaper.png
+`python3 theme_build.py /path/to/wallpaper.png`
 
 ---
 
@@ -27,11 +28,11 @@ Core Philosophy: Simplicity Enables Integration
 
 This project is intentionally small and dependency-minimal because:
 
-    No Subprocesses: theme_build.py imports palette_gen.py directly—same Python interpreter, same process. Functions return dicts and strings, not subprocess output to parse.
+    No Subprocesses: theme_build.py imports palette_gen.py directly. Same Python interpreter, same process. Functions return dicts and strings, not subprocess output to parse.
 
     Pure Color Math: All palette generation uses standard library (colorsys, math) plus Pillow for image processing. No exotic color science libraries.
 
-    Modular Functions: Every palette operation—extraction, deduplication, accent selection, ramp synthesis—is a standalone, testable function with clear inputs and outputs.
+    Modular Functions: Every palette operation—extraction, deduplication, accent selection, ramp synthesis is a standalone, testable function with clear inputs and outputs.
 
     Multiple Output Formats: The same palette engine emits Base16 INI, GTK3 CSS, and GTK2 RC files. Swap serializers without regenerating.
 
@@ -52,13 +53,21 @@ This project is intentionally small and dependency-minimal because:
 - theme_build.py = consumer orchestration (builds on palette_gen)
 - Filesystem I/O = isolated in helpers; core logic is pure
 - No circular imports or tight coupling
+---
+## Quick View
+
+- palette_view.py
+  - creates a gradient of the color palette
+  - use python3 ./palette_gen.py /path/to/image.png | ./palette_view.py -o dynamic_palette.png to create an image of the generated palette. 
+
+---
 
 Feature Highlights
 Palette Extraction
 
     Adaptive Image Quantization: Thumbnail + PIL adaptive palette for fast, high-quality color sampling (default: 32 colors from 192×192 resize)
     Smart Deduplication: Merge near-identical colors in RGB space (default: 24 RGB distance threshold)
-    Wallpaper-Driven Generation: Extract dominant, saturated accent colors; build dark/light ramps from actual image colors
+    Wallpaper Driven Generation: Extract dominant, saturated accent colors; build dark/light ramps from actual image colors
 
 Semantic Slot Synthesis
 
@@ -107,7 +116,7 @@ Output: Base16 palette with debug table (luminance, saturation, hue per slot).
 Creates:
 
 ```
-~/.local/share/themes/Dorakura-Kyoto/
+~/.local/share/themes/default-theme/
 ├── index.theme                          # Metadata
 ├── color.ini                            # Base16 snapshot
 ├── gtk-2.0/
@@ -131,7 +140,7 @@ Widget stubs are created only if missing—your edits are safe.i
 
 ```
   theme_build.py /path/to/new-wallpaper.png \
-  --theme-root ~/.local/share/themes/Dorakura-Kyoto \
+  --theme-root ~/.local/share/themes/default-theme \
   --surface-style neutral
 ```
 
@@ -201,7 +210,7 @@ Options:
 Usage: theme_build.py IMAGE [OPTIONS]
 
 Options:
-  --theme-root PATH             Target theme directory (default: ~/.local/share/themes/Dorakura-Kyoto)
+  --theme-root PATH             Target theme directory (default: ~/.local/share/themes/default-theme)
   --theme-name TEXT             Display name for index.theme (default: Theme-Auto)
   --scheme-name TEXT            Palette scheme name (default: Theme-Auto)
   --author TEXT                 Palette author (default: theme_build.py)
@@ -300,7 +309,7 @@ Pythonic-Palette-Generator/
 - Type hints for all public functions
 - Docstrings for complex logic
 - Liberal comments for color math rationale
-- Clear variable names (no c1, c2 without context)
+- Clear variable names (no c1, c2..etc; without context)
  
 **Future Roadmap:**
 

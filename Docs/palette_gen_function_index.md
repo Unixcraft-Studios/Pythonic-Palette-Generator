@@ -1360,7 +1360,7 @@ If you keep evolving this file, follow these rules:
 - add new serializer function
 - do NOT jam filesystem logic into palette math
 
-This is the exact right Python architecture for C/embedded path later if we wanna try stuff.
+This is a nice Python architecture for C/embedded path later if we go that route.
 
 ============================================================
 16) ONE-LINE ROLE SUMMARY PER FUNCTION
